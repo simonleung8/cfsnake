@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -11,22 +12,32 @@ const (
 	PortVar = "VCAP_APP_PORT"
 )
 
+const width int = 100
+const height int = 100
+
 type player struct {
-	dice  []int
-	score int
+	name  string
+	snake []string
 }
 
-var playerList map[string]player
+var playerList []player
 
 func Serve() {
 	r := mux.NewRouter()
 	r.Methods("GET").Path("/").HandlerFunc(redirectBase)
+	r.Methods("GET").Path("/test").HandlerFunc(testHandler)
 
 	http.Handle("/ui/", http.StripPrefix("/ui/", http.FileServer(http.Dir("ui"))))
-	//http.HandleFunc("/ws", wsHandler)
+
 	http.Handle("/", r)
 	bind()
 
+}
+
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	snake := []string{"1,1", "2,1", "3,1"}
+	d, _ := json.Marshal(&player{"simon", snake})
+	fmt.Fprintf(w, string(d))
 }
 
 func redirectBase(w http.ResponseWriter, r *http.Request) {
