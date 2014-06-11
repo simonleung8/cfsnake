@@ -18,9 +18,9 @@ type Redis struct {
 	Conn redis.Conn
 }
 
-func NewRedis(services parser.Services) (*Redis, error) {
+func NewRedis() (*Redis, error) {
 	//Parse the service configurations
-	services := parser.Services{}
+	services := &parser.Services{}
 
 	if os.Getenv("VCAP_SERVICES") != "" {
 		//setup our redis connections using redis
