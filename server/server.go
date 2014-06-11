@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -20,9 +21,15 @@ type Player struct {
 	Snake []string
 }
 
-type playerList []player
+type playerList []Player
 
 var gameData playerList
+
+func init() {
+	snake1 := []string{"1,1", "2,1", "3,1"}
+	snake2 := []string{"24,1", "25,1", "26,1", "26,2"}
+	gameData = playerList{Player{"simon", snake1}, Player{"dan", snake2}}
+}
 
 func Serve() {
 	r := mux.NewRouter()
@@ -37,19 +44,37 @@ func Serve() {
 	http.Handle("/ui/", http.StripPrefix("/ui/", http.FileServer(http.Dir("ui"))))
 
 	http.Handle("/", r)
-	bind()
 
+	bind()
 }
 
 func goForward() {
+	ticker := time.NewTicker(1 * time.Second)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				calcualteSteps()
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+}
 
+func calcualteSteps() {
+	fmt.Println(len(gameData))
+	for _, player := range gameData {
+		for _, snake := range player.Snake {
+			//go forward
+			fmt.Println(snake)
+		}
+	}
 }
 
 func updateHandler(w http.ResponseWriter, r *http.Request) {
-	snake1 := []string{"1,1", "2,1", "3,1"}
-	snake2 := []string{"24,1", "25,1", "26,1", "26,2"}
-
-	gameData := &playerList{Player{"simon", snake1}, Player{"dan", snake2}}
 
 	d, _ := json.Marshal(gameData)
 	fmt.Fprintf(w, string(d))
@@ -75,7 +100,8 @@ func redirectBase(w http.ResponseWriter, r *http.Request) {
 func bind() {
 	port := "8080"
 
-	fmt.Printf("Starting ssss ui on http://localhost:%s", port)
+	go goForward()
+	fmt.Printf("Starting server on http://localhost:%s", port)
 	if err := ListenAndServe(":" + port); err != nil {
 		panic(err)
 	}
