@@ -2,11 +2,12 @@ package redis
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/simonleung8/cfsnake/parser"
-	. "github.com/simonleung8/cfsnake/server"
+	. "github.com/simonleung8/cfsnake/server" //redis module should not know about game or server
 )
 
 const (
@@ -26,7 +27,7 @@ func NewRedis() (*Redis, error) {
 		//setup our redis connections using redis
 		services.Parse(os.Getenv("VCAP_SERVICES"))
 	} else {
-		return nil, error.New("No VCAP_SERVICES")
+		return nil, errors.New("No VCAP_SERVICES")
 	}
 
 	var red Redis
@@ -52,14 +53,14 @@ func (red *Redis) Read(data chan Player) {
 	for {
 		switch v := sub.Receive().(type) {
 		case redis.Message:
-			json.Unmarshal([]byte(v.Data), &person)
+			json.Unmarshal([]byte(v.Data), &person) //return raw byte to game, let game take care of unmarshalling
 			Player <- person
 		}
 	}
 }
 
 func (red *Redis) Push(person Person) error {
-	data, err := json.Marshal(&Person)
+	data, err := json.Marshal(&Person) //Marshal interface{} to decouple dependies?
 	if err != nil {
 		return err
 	}
