@@ -25,7 +25,7 @@ var playerList []player
 func Serve() {
 	r := mux.NewRouter()
 	r.Methods("GET").Path("/").HandlerFunc(redirectBase)
-	r.Methods("GET").Path("/test").HandlerFunc(testHandler)
+	r.Methods("GET").Path("/update").HandlerFunc(updateHandler)
 
 	http.Handle("/ui/", http.StripPrefix("/ui/", http.FileServer(http.Dir("ui"))))
 
@@ -34,10 +34,13 @@ func Serve() {
 
 }
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
+func updateHandler(w http.ResponseWriter, r *http.Request) {
 	snake := []string{"1,1", "2,1", "3,1"}
-	d, _ := json.Marshal(&player{"simon", snake})
-	fmt.Fprintf(w, string(d))
+	p := &player{"simon", snake}
+	d, _ := json.Marshal(p)
+	//fmt.Fprintf(w, string(d))
+	fmt.Println(d)
+	fmt.Fprintf(w, "", d)
 }
 
 func redirectBase(w http.ResponseWriter, r *http.Request) {
