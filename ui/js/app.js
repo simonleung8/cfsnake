@@ -2,10 +2,11 @@ var game = function() {
 	
 	const blockW = $("#gameCanvas").width() / 100;
 	const blockH = $("#gameCanvas").height() / 100;
-
+	var canvas = document.getElementById("gameCanvas");
 
 
 	function refresh(){
+		$(canvas).html();
 		$.get( "/update", function( data ) {
 			console.log(data)
 			jsonStr = $.parseJSON( data )			
@@ -14,12 +15,11 @@ var game = function() {
 	}
 
 	function redraw(jsonStr) {
-		var c = document.getElementById("gameCanvas");
 		var ctx;
 		jsonStr.forEach(function(player){
 			player.Snake.forEach(function(d) {
 				cord = d.split(",")		
-				ctx = c.getContext("2d");
+				ctx = canvas.getContext("2d");
 				ctx.fillStyle="#FF0000";
 				ctx.fillRect(cord[0] * blockW,cord[1] * blockH,blockW, blockH);			
 			})
@@ -39,5 +39,6 @@ var game = function() {
 	    	$.get( "/down", function( data ) {});	
 	    }
 	});
-	refresh();
+	//setInterval(refresh,200)
+	refresh()
 }

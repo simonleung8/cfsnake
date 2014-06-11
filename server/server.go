@@ -15,12 +15,14 @@ const (
 const width int = 100
 const height int = 100
 
-type player struct {
+type Player struct {
 	Name  string
 	Snake []string
 }
 
 type playerList []player
+
+var gameData playerList
 
 func Serve() {
 	r := mux.NewRouter()
@@ -39,13 +41,17 @@ func Serve() {
 
 }
 
+func goForward() {
+
+}
+
 func updateHandler(w http.ResponseWriter, r *http.Request) {
 	snake1 := []string{"1,1", "2,1", "3,1"}
 	snake2 := []string{"24,1", "25,1", "26,1", "26,2"}
 
-	p := &playerList{player{"simon", snake1}, player{"dan", snake2}}
+	gameData := &playerList{Player{"simon", snake1}, Player{"dan", snake2}}
 
-	d, _ := json.Marshal(p)
+	d, _ := json.Marshal(gameData)
 	fmt.Fprintf(w, string(d))
 }
 
