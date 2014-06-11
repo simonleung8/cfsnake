@@ -21,12 +21,16 @@ type Player struct {
 	Snake []string
 }
 
+<<<<<<< HEAD
+type playerList []Player
+=======
 type Direction struct {
 	Direction string //or int n,s,e,w or 1,2,3,4
 
 }
 
-type playerList []Player
+type playerList []player
+>>>>>>> 68d534b4f114879bed29cc69a39e5412164f2e56
 
 var gameData playerList
 
