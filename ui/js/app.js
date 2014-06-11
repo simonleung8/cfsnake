@@ -1,19 +1,43 @@
 var game = function() {
 	
-	const blockW = $("#gameBoard").width() / 100;
-	const blockH = $("#gameBoard").height() / 100;
+	const blockW = $("#gameCanvas").width() / 100;
+	const blockH = $("#gameCanvas").height() / 100;
+
+
 
 	function refresh(){
 		$.get( "/update", function( data ) {
-		  console.log(JSON.stringify(data))
-		});
-
-		var tmp = ["1,1","1,2","1,3"]
-		var c = document.getElementById("gameBoard");
-		var ctx = c.getContext("2d");
-		ctx.rect(20,20,150,100);
-		ctx.stroke();
+			console.log(data)
+			jsonStr = $.parseJSON( data )			
+			redraw(jsonStr);
+		});		
 	}
 
+	function redraw(jsonStr) {
+		var c = document.getElementById("gameCanvas");
+		var ctx;
+		jsonStr.forEach(function(player){
+			player.Snake.forEach(function(d) {
+				cord = d.split(",")		
+				ctx = c.getContext("2d");
+				ctx.fillStyle="#FF0000";
+				ctx.fillRect(cord[0] * blockW,cord[1] * blockH,blockW, blockH);			
+			})
+
+		})
+		
+	}
+
+	$(document).keydown(function(e) {
+	    if (e.keyCode === 37) {
+	    	$.get( "/left", function( data ) {});	
+	    } else if (e.keyCode === 38) {
+	    	$.get( "/up", function( data ) {});	
+	    } else if (e.keyCode === 39) {
+	    	$.get( "/right", function( data ) {});	
+	    } else if (e.keyCode === 40) {
+	    	$.get( "/down", function( data ) {});	
+	    }
+	});
 	refresh();
 }
