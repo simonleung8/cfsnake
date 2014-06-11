@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/garyburd/redigo/redis"
+	"github.com/simonleung8/cfsnake/parser"
 	. "github.com/simonleung8/cfsnake/server"
 )
 
