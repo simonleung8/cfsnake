@@ -20,6 +20,11 @@ type Player struct {
 	Snake []string
 }
 
+type Direction struct {
+	Direction string //or int n,s,e,w or 1,2,3,4
+
+}
+
 type playerList []player
 
 var gameData playerList
